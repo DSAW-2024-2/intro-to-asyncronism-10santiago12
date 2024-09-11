@@ -3,7 +3,7 @@
 
 ## Santiago Urrego Rodriguez
 
-## Link del repositorio: https://github.com/DSAW-2024-2/intro-to-asyncronism-10santiago12/actions/runs/10803532522/job/29967536576
+## Link del repositorio: https://dsaw-2024-2.github.io/intro-to-asyncronism-10santiago12/
 
 ## Introducción al Asíncronismo
 
