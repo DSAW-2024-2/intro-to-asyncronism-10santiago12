@@ -1,30 +1,29 @@
-
-/* Estilo para el header */
-header {
+header 
+{
     display: flex;
-    justify-content: center; /* Centra el h1 horizontalmente */
+    justify-content: center;
     padding: 20px;
 }
 
-/* Estilo para el contenedor principal */
-.main-container {
+.main-container 
+{
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centra los elementos horizontalmente */
-    gap: 20px; /* Espacio entre los elementos */
+    align-items: center;
+    gap: 20px;
     padding: 20px;
 }
 
-/* Estilo para el contenedor de los Pokémon */
-.pokemon-container {
+.pokemon-container 
+{
     display: grid;
     padding: 40px;
-    grid-template-columns: repeat(4, 1fr); /* 4 columnas */
-    gap: 20px; /* Espacio entre los Pokémon */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
 }
 
-/* Estilo para cada tarjeta de Pokémon */
-.pokemon-card {
+.pokemon-card 
+{
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 10px;
@@ -32,7 +31,8 @@ header {
     background-color: #f9f9f9;
 }
 
-.pokemon-card img {
+.pokemon-card img 
+{
     max-width: 100%;
     height: auto;
 }

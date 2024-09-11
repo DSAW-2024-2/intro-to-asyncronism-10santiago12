@@ -1,9 +1,9 @@
 // Función para obtener un Pokémon aleatorio
 function getRandomPokemon() 
 {
-    const randomId = Math.floor(Math.random() * 1025) + 1; // Generar ID aleatorio entre 1 y 1025
-    clearPokemonInfo(); // Limpiar el contenedor antes de mostrar el Pokémon aleatorio
-    getPokemonById(randomId); // Llamar a la función que busca el Pokémon por ID
+    const randomId = Math.floor(Math.random() * 1025) + 1;
+    clearPokemonInfo();
+    getPokemonById(randomId);
 }
 
 // Función para obtener información de un Pokémon por ID
@@ -17,7 +17,7 @@ function getPokemonById(id)
             return response.json();
         })
         .then(data => {
-            displayPokemon(data); // Muestra la información del Pokémon aleatorio
+            displayPokemon(data);
         })
         .catch(error => {
             console.error('Error al obtener Pokémon aleatorio:', error);
@@ -27,7 +27,7 @@ function getPokemonById(id)
 
 // Evento en el botón de Pokémon aleatorio
 document.getElementById('randomPokemon').addEventListener('click', () => {
-    getRandomPokemon(); // Llamar a la función que genera el Pokémon aleatorio
+    getRandomPokemon();
 });
 
 // Función para mostrar la información del Pokémon
@@ -45,7 +45,7 @@ function displayPokemon(pokemon) {
 // Función para limpiar el contenedor de Pokémon
 function clearPokemonInfo() {
     const pokemonInfo = document.getElementById('pokemonInfo');
-    pokemonInfo.innerHTML = ''; // Limpia el contenedor
+    pokemonInfo.innerHTML = '';
 }
 
 // Función para obtener los primeros 20 Pokémon al cargar la página
@@ -53,9 +53,9 @@ function loadPokemons() {
     fetch('https://pokeapi.co/api/v2/pokemon?limit=20')
         .then(response => response.json())
         .then(data => {
-            clearPokemonInfo(); // Limpiar antes de mostrar los primeros 20
+            clearPokemonInfo();
             data.results.forEach(pokemon => {
-                getPokemonByName(pokemon.name, false); // Mostrar Pokémon sin limpiar en cada llamada
+                getPokemonByName(pokemon.name, false);
             });
         })
         .catch(error => console.error('Error al obtener los primeros 20 Pokémon:', error));
@@ -67,7 +67,6 @@ function getPokemonTypes() {
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('pokemonType');
-            // Limpiar el select antes de agregar opciones
             select.innerHTML = '<option value="">Selecciona un tipo</option>';
             data.results.forEach(type => {
                 const option = document.createElement('option');
@@ -75,13 +74,11 @@ function getPokemonTypes() {
                 option.textContent = type.name;
                 select.appendChild(option);
             });
-
-            // Escuchar cambios en el select para buscar automáticamente al seleccionar un tipo
             select.addEventListener('change', () => {
                 const selectedType = select.value;
                 if (selectedType) {
-                    clearPokemonInfo(); // Limpiar los Pokémon mostrados por defecto antes de buscar
-                    getPokemonByType(selectedType); // Buscar todos los Pokémon del tipo seleccionado
+                    clearPokemonInfo();
+                    getPokemonByType(selectedType);
                 }
             });
         })
@@ -96,10 +93,10 @@ function getPokemonByType(type) {
     fetch(`https://pokeapi.co/api/v2/type/${type}`)
         .then(response => response.json())
         .then(data => {
-            clearPokemonInfo(); // Limpiar una sola vez antes de agregar los Pokémon de tipo
+            clearPokemonInfo();
             data.pokemon.forEach(pokemonEntry => {
                 const pokemonName = pokemonEntry.pokemon.name;
-                getPokemonByName(pokemonName, false); // Mostrar cada Pokémon del tipo sin limpiar en cada iteración
+                getPokemonByName(pokemonName, false);
             });
         })
         .catch(error => {
@@ -109,12 +106,12 @@ function getPokemonByType(type) {
 
 // Función para obtener información de un Pokémon por nombre
 function getPokemonByName(name, shouldClear = true) {
-    console.log(`Buscando Pokémon por nombre: ${name}`); // Depuración
+    console.log(`Buscando Pokémon por nombre: ${name}`);
     fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`)
         .then(response => response.json())
         .then(data => {
-            if (shouldClear) clearPokemonInfo(); // Solo limpia si es una búsqueda única (por nombre o aleatorio)
-            displayPokemon(data); // Muestra la información del Pokémon
+            if (shouldClear) clearPokemonInfo();
+            displayPokemon(data);
         })
         .catch(error => {
             console.error('Error al buscar Pokémon por nombre:', error);
@@ -122,16 +119,14 @@ function getPokemonByName(name, shouldClear = true) {
         });
 }
 
-// Al cargar la página, muestra los primeros 20 Pokémon y obtiene el número total de Pokémon
 window.onload = () => {
-    loadPokemons(); // Muestra los primeros 20 Pokémon
-    getPokemonTypes(); // Carga los tipos de Pokémon en el select
+    loadPokemons();
+    getPokemonTypes();
 };
 
-// Evento en el botón de búsqueda por nombre
 document.getElementById('searchByName').addEventListener('click', () => {
     const name = document.getElementById('pokemonName').value;
     if (name) {
-        getPokemonByName(name); // Busca el Pokémon por nombre
+        getPokemonByName(name);
     }
 });
