@@ -1,12 +1,12 @@
-header 
-{
+/* Estilo general para el header y footer */
+header, footer {
     display: flex;
     justify-content: center;
     padding: 20px;
 }
 
-.main-container 
-{
+/* Estilo general para el contenedor principal */
+.main-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -14,25 +14,83 @@ header
     padding: 20px;
 }
 
-.pokemon-container 
-{
+/* Estilo para el contenedor de los Pokémon */
+.pokemon-container {
     display: grid;
     padding: 40px;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 
-.pokemon-card 
-{
+/* Estilo para cada tarjeta de Pokémon */
+.pokemon-card {
     border: 1px solid #ccc;
     border-radius: 8px;
     padding: 10px;
     text-align: center;
     background-color: #f9f9f9;
+    cursor: pointer; /* Cursor de mano al pasar sobre la tarjeta */
+    transition: transform 0.2s; /* Transición para el efecto de zoom */
 }
 
-.pokemon-card img 
-{
+.pokemon-card:hover {
+    transform: scale(1.05); /* Efecto de zoom al pasar el cursor */
+}
+
+/* Estilo para la imagen del Pokémon */
+.pokemon-card img {
     max-width: 100%;
     height: auto;
+    border-radius: 8px;
+}
+
+/* Estilo general para el modal */
+#pokemonModal {
+    display: none; /* Ocultado por defecto */
+    position: fixed; /* Fijo en la pantalla */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Fondo oscuro con opacidad */
+    justify-content: center; /* Centrar el modal vertical y horizontalmente */
+    align-items: center; /* Centrar el modal verticalmente */
+    z-index: 1000; /* Asegura que el modal esté sobre otros elementos */
+}
+
+/* Contenedor del contenido del modal */
+#modalPokemonDetails {
+    position: relative;
+    background: #fff; /* Fondo blanco para el modal */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 20px; /* Espaciado interno */
+    width: 80%; /* Ancho del contenedor */
+    max-width: 600px; /* Ancho máximo del contenedor */
+    text-align: center; /* Centrar el texto */
+    position: relative; /* Posicionar el botón de cierre correctamente */
+}
+
+/* Imagen dentro del modal */
+#modalPokemonDetails img {
+    max-width: 60%; /* Ajustar el ancho máximo de la imagen al contenedor */
+    height: auto; /* Mantener la proporción de la imagen */
+    border-radius: 8px; /* Bordes redondeados para la imagen */
+}
+
+#closeModal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px; 
+    font-weight: bold; 
+    transform: translateY(75px) translateX(-465px);
+    z-index: 1001;
 }

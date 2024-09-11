@@ -8,7 +8,7 @@
 </head>
 <body>
     <header>
-        <h1>Pokédex</h1>
+        <h1 id="title" style="cursor: pointer">Pokédex</h1>
     </header>
     
     <div class="main-container">
@@ -25,7 +25,19 @@
     </div>
 
     <div id="pokemonInfo" class="pokemon-container"></div>
+
+    <footer>
+        <button id="loadMore">Cargar Más</button>
+    </footer>
     
+    <!-- Tarjeta emergente (modal) para mostrar detalles específicos -->
+    <div id="pokemonModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal">&times;</span>
+            <div id="modalPokemonDetails"></div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

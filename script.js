@@ -1,14 +1,16 @@
 // Función para obtener un Pokémon aleatorio
-function getRandomPokemon() 
-{
+function getRandomPokemon() {
     const randomId = Math.floor(Math.random() * 1025) + 1;
     clearPokemonInfo();
     getPokemonById(randomId);
 }
 
+document.getElementById('title').addEventListener('click', () => {
+    window.location.reload();
+});
+
 // Función para obtener información de un Pokémon por ID
-function getPokemonById(id) 
-{
+function getPokemonById(id) {
     fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
         .then(response => {
             if (!response.ok) {
@@ -33,11 +35,27 @@ document.getElementById('randomPokemon').addEventListener('click', () => {
 // Función para mostrar la información del Pokémon
 function displayPokemon(pokemon) {
     const pokemonInfo = document.getElementById('pokemonInfo');
+
+    // Verificar si existe la imagen en 'sprites.front_default' o 'official-artwork', de lo contrario no mostrar el Pokémon
+    const imageUrl = pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default;
+
+    // Si no existe ninguna imagen, mostrar un mensaje de que el Pokémon no tiene imagen y no mostrar la tarjeta
+    if (!imageUrl) {
+        pokemonInfo.innerHTML += `
+            <div class="pokemon-card" onclick="showPokemonDetails('${pokemon.id}')">
+                <h2>${pokemon.name}</h2>
+                <p>No se encontró una imagen disponible para este Pokémon.</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Mostrar el Pokémon con la imagen si está disponible
     pokemonInfo.innerHTML += `
-        <div class="pokemon-card">
+        <div class="pokemon-card" onclick="showPokemonDetails('${pokemon.id}')">
             <h2>${pokemon.name}</h2>
             <p>Peso: ${pokemon.weight}</p>
-            <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+            <img src="${imageUrl}" alt="${pokemon.name}">
         </div>
     `;
 }
@@ -119,10 +137,51 @@ function getPokemonByName(name, shouldClear = true) {
         });
 }
 
-window.onload = () => {
-    loadPokemons();
-    getPokemonTypes();
-};
+// Función para mostrar el modal con detalles del Pokémon
+function showPokemonDetails(id) {
+    fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            const modalContent = document.getElementById('modalPokemonDetails');
+            const imageUrl = data.sprites.other['official-artwork'].front_default || data.sprites.front_default;
+
+            modalContent.innerHTML = `
+                <h2>${data.name}</h2>
+                <img src="${imageUrl}" alt="${data.name}">
+                <p>Peso: ${data.weight}</p>
+                <p>Altura: ${data.height}</p>
+                <p>Tipo(s): ${data.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
+            `;
+
+            document.getElementById('pokemonModal').style.display = 'flex';
+        })
+        .catch(error => {
+            console.error('Error al obtener detalles del Pokémon:', error);
+        });
+}
+
+// Evento para cerrar el modal
+document.getElementById('closeModal').addEventListener('click', () => {
+    document.getElementById('pokemonModal').style.display = 'none';
+});
+
+// Función para cargar Pokémon adicionales (después de los primeros 20)
+function loadMorePokemons() {
+    fetch(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${offset}`)
+        .then(response => response.json())
+        .then(data => {
+            data.results.forEach(pokemon => {
+                getPokemonByName(pokemon.name, false); // Mostrar Pokémon sin limpiar en cada llamada
+            });
+            offset += 20; // Incrementar el desplazamiento para la próxima carga
+        })
+        .catch(error => console.error('Error al cargar más Pokémon:', error));
+}
+
+// Evento en el botón de "Cargar Más"
+document.getElementById('loadMore').addEventListener('click', () => {
+    loadMorePokemons(); // Cargar más Pokémon cuando se haga clic en el botón
+});
 
 document.getElementById('searchByName').addEventListener('click', () => {
     const name = document.getElementById('pokemonName').value;
@@ -130,3 +189,10 @@ document.getElementById('searchByName').addEventListener('click', () => {
         getPokemonByName(name);
     }
 });
+
+window.onload = () => {
+    loadPokemons();
+    getPokemonTypes();
+};
+
+let offset = 20; // Desplazamiento inicial después de los primeros 20 Pokémon
