@@ -220,13 +220,13 @@ select
 
     .pokemon-card img 
     {
-        max-width: 80px;
+        max-width: 90px;
         height: auto;
     }
 
     #modalPokemonDetails 
     {
-        width: 50%;
+        width: 90%;
         align-items: center;
         max-width: 300px;
         padding: 10px;
@@ -235,7 +235,7 @@ select
 
     #modalPokemonDetails img 
     {
-        max-width: 50%;
+        max-width: 70%;
         height: auto;
     }
 
