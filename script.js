@@ -62,7 +62,6 @@ function displayPokemon(pokemon) {
     const types = pokemon.types.map(typeInfo => typeInfo.type.name);
     const primaryType = types[0]; // Usar el primer tipo como referencia para el color
 
-    // Crear la tarjeta de Pokémon con color de fondo según el tipo
     pokemonInfo.innerHTML += `
         <div class="pokemon-card" style="background-color: ${typeColors[primaryType] || 'gray'};" onclick="showPokemonDetails('${pokemon.id}')">
             <h2>${pokemon.name}</h2>
@@ -77,6 +76,7 @@ function displayPokemon(pokemon) {
 function clearPokemonInfo() {
     document.getElementById('pokemonInfo').innerHTML = '';
 }
+
 
 function loadPokemons() {
     fetch('https://pokeapi.co/api/v2/pokemon?limit=20')
@@ -170,7 +170,11 @@ function showPokemonDetails(id) {
             const modalContent = document.getElementById('modalPokemonDetails');
             const imageUrl = data.sprites.other['official-artwork'].front_default || data.sprites.front_default;
             const abilities = data.abilities.map(abilityInfo => abilityInfo.is_hidden ? `${abilityInfo.ability.name}` : abilityInfo.ability.name).join(', ');
+            const types = data.types.map(typeInfo => typeInfo.type.name);
+            const primaryType = types[0];
+            const typeColor = typeColors[primaryType] || 'gray';
 
+            // Obtener la cadena de evolución
             return fetch(data.species.url)
                 .then(response => response.json())
                 .then(speciesData => getEvolutionChain(speciesData.evolution_chain.url)
@@ -187,24 +191,40 @@ function showPokemonDetails(id) {
                         return Promise.all(evolutionPromises)
                             .then(evolutionDetails => {
                                 const evolutionHTML = evolutionDetails.map(evo => evo.image ? `<img src="${evo.image}" alt="${evo.name}" title="${evo.name}" style="width: 50px; height: 50px;">` : `<span>${evo.name}</span>`).join(' → ');
+
+                                // Llenar el contenido del modal con la información del Pokémon
                                 modalContent.innerHTML = `
+                                    <span id="closeModal">&times;</span>
                                     <h2>${data.name}</h2>
                                     <img src="${imageUrl}" alt="${data.name}">
                                     <p>ID: ${data.id}</p>
                                     <p>Weight: ${data.weight / 10} Kg</p>
                                     <p>Height: ${data.height / 10} Mts</p>
-                                    <p>Type: ${data.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
+                                    <p>Type: ${types.join(', ')}</p>
                                     <p>Skills: ${abilities}</p>
                                     <p>Evolutions: ${evolutionHTML}</p>
                                 `;
+
+                                // Aplicar el color de fondo del modal según el tipo de Pokémon
+                                modalContent.style.backgroundColor = typeColor;
+
+                                // Mostrar el modal
                                 document.getElementById('pokemonModal').style.display = 'flex';
                                 document.body.style.overflow = 'hidden';
+
+                                // Cerrar el modal al hacer clic en la "X"
+                                document.getElementById('closeModal').onclick = function() {
+                                    document.getElementById('pokemonModal').style.display = 'none';
+                                    document.body.style.overflow = 'auto';
+                                };
                             });
                     })
                 );
         })
         .catch(error => console.error('Error al obtener detalles del Pokémon:', error));
 }
+
+
 
 document.getElementById('closeModal').addEventListener('click', () => {
     document.getElementById('pokemonModal').style.display = 'none';
@@ -225,6 +245,13 @@ document.getElementById('loadMore').addEventListener('click', () => {
     loadMorePokemons();
 });
 
+document.getElementById('back').addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+
 document.getElementById('searchByName').addEventListener('click', () => {
     const name = document.getElementById('pokemonName').value;
     if (name) {
@@ -236,5 +263,4 @@ window.onload = () => {
     loadPokemons();
     getPokemonTypes();
 };
-
 let offset = 20;
