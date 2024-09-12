@@ -12,31 +12,28 @@
     </header>
     
     <div class="main-container">
-        <label for="pokemonName">Buscar por nombre:</label>
-        <input type="text" id="pokemonName" placeholder="Nombre o ID">
-        <button id="searchByName">Buscar</button>
+        <label for="pokemonName">Search by name:</label>
+        <input type="text" id="pokemonName" placeholder="Name or ID">
+        <button id="searchByName">Search</button>
         
-        <label for="pokemonType">Buscar por tipo:</label>
-        <select id="pokemonType">
-            <option value="">Selecciona un tipo</option>
-        </select>
+        <label for="pokemonType">Search by type:</label>
+        <select id="pokemonType"></select>
 
-        <button id="randomPokemon">Obtener Pokémon aleatorio</button>
+        <button id="randomPokemon">Random</button>
     </div>
 
     <div id="pokemonInfo" class="pokemon-container"></div>
 
-    <footer>
-        <button id="loadMore">Cargar Más</button>
-    </footer>
-    
-    <!-- Tarjeta emergente (modal) para mostrar detalles específicos -->
     <div id="pokemonModal" class="modal">
         <div class="modal-content">
             <span id="closeModal">&times;</span>
             <div id="modalPokemonDetails"></div>
         </div>
     </div>
+
+    <footer>
+        <button id="loadMore">Load more</button>
+    </footer>
 
     <script src="script.js"></script>
 </body>

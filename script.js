@@ -1,4 +1,3 @@
-// Función para obtener un Pokémon aleatorio
 function getRandomPokemon() {
     const randomId = Math.floor(Math.random() * 1025) + 1;
     clearPokemonInfo();
@@ -9,37 +8,24 @@ document.getElementById('title').addEventListener('click', () => {
     window.location.reload();
 });
 
-// Función para obtener información de un Pokémon por ID
 function getPokemonById(id) {
     fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('No se encontró el Pokémon con este ID');
-            }
-            return response.json();
-        })
-        .then(data => {
-            displayPokemon(data);
-        })
+        .then(response => response.json())
+        .then(data => displayPokemon(data))
         .catch(error => {
             console.error('Error al obtener Pokémon aleatorio:', error);
             alert('No se encontró el Pokémon aleatorio');
         });
 }
 
-// Evento en el botón de Pokémon aleatorio
 document.getElementById('randomPokemon').addEventListener('click', () => {
     getRandomPokemon();
 });
 
-// Función para mostrar la información del Pokémon
 function displayPokemon(pokemon) {
     const pokemonInfo = document.getElementById('pokemonInfo');
-
-    // Verificar si existe la imagen en 'sprites.front_default' o 'official-artwork', de lo contrario no mostrar el Pokémon
     const imageUrl = pokemon.sprites.other['official-artwork'].front_default || pokemon.sprites.front_default;
 
-    // Si no existe ninguna imagen, mostrar un mensaje de que el Pokémon no tiene imagen y no mostrar la tarjeta
     if (!imageUrl) {
         pokemonInfo.innerHTML += `
             <div class="pokemon-card" onclick="showPokemonDetails('${pokemon.id}')">
@@ -50,42 +36,38 @@ function displayPokemon(pokemon) {
         return;
     }
 
-    // Mostrar el Pokémon con la imagen si está disponible
+    const abilities = pokemon.abilities.map(abilityInfo => abilityInfo.ability.name).join(', ');
+
     pokemonInfo.innerHTML += `
         <div class="pokemon-card" onclick="showPokemonDetails('${pokemon.id}')">
             <h2>${pokemon.name}</h2>
-            <p>Peso: ${pokemon.weight}</p>
+            <p>Weight: ${pokemon.weight/10} Kg</p>
+            <p>Type: ${pokemon.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
             <img src="${imageUrl}" alt="${pokemon.name}">
         </div>
     `;
 }
 
-// Función para limpiar el contenedor de Pokémon
 function clearPokemonInfo() {
-    const pokemonInfo = document.getElementById('pokemonInfo');
-    pokemonInfo.innerHTML = '';
+    document.getElementById('pokemonInfo').innerHTML = '';
 }
 
-// Función para obtener los primeros 20 Pokémon al cargar la página
 function loadPokemons() {
     fetch('https://pokeapi.co/api/v2/pokemon?limit=20')
         .then(response => response.json())
         .then(data => {
             clearPokemonInfo();
-            data.results.forEach(pokemon => {
-                getPokemonByName(pokemon.name, false);
-            });
+            data.results.forEach(pokemon => getPokemonByName(pokemon.name, false));
         })
         .catch(error => console.error('Error al obtener los primeros 20 Pokémon:', error));
 }
 
-// Función para obtener la lista de tipos de Pokémon y crear un select
 function getPokemonTypes() {
     fetch('https://pokeapi.co/api/v2/type')
         .then(response => response.json())
         .then(data => {
             const select = document.getElementById('pokemonType');
-            select.innerHTML = '<option value="">Selecciona un tipo</option>';
+            select.innerHTML = '<option value="">Choose</option>';
             data.results.forEach(type => {
                 const option = document.createElement('option');
                 option.value = type.name;
@@ -106,7 +88,29 @@ function getPokemonTypes() {
         });
 }
 
-// Función para obtener Pokémon por tipo y mostrar todos los de ese tipo
+function getEvolutionChain(url) {
+    return fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            const evolutionChain = [];
+            function traverse(chain) {
+                evolutionChain.push({
+                    name: chain.species.name,
+                    url: chain.species.url
+                });
+                if (chain.evolves_to.length > 0) {
+                    chain.evolves_to.forEach(evolution => traverse(evolution));
+                }
+            }
+            traverse(data.chain);
+            return evolutionChain;
+        })
+        .catch(error => {
+            console.error('Error al obtener la cadena de evolución:', error);
+            return [];
+        });
+}
+
 function getPokemonByType(type) {
     fetch(`https://pokeapi.co/api/v2/type/${type}`)
         .then(response => response.json())
@@ -117,14 +121,10 @@ function getPokemonByType(type) {
                 getPokemonByName(pokemonName, false);
             });
         })
-        .catch(error => {
-            console.error('Error al obtener Pokémon por tipo:', error);
-        });
+        .catch(error => console.error('Error al obtener Pokémon por tipo:', error));
 }
 
-// Función para obtener información de un Pokémon por nombre
 function getPokemonByName(name, shouldClear = true) {
-    console.log(`Buscando Pokémon por nombre: ${name}`);
     fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`)
         .then(response => response.json())
         .then(data => {
@@ -137,50 +137,65 @@ function getPokemonByName(name, shouldClear = true) {
         });
 }
 
-// Función para mostrar el modal con detalles del Pokémon
 function showPokemonDetails(id) {
     fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
         .then(response => response.json())
         .then(data => {
             const modalContent = document.getElementById('modalPokemonDetails');
             const imageUrl = data.sprites.other['official-artwork'].front_default || data.sprites.front_default;
+            const abilities = data.abilities.map(abilityInfo => abilityInfo.is_hidden ? `${abilityInfo.ability.name}` : abilityInfo.ability.name).join(', ');
 
-            modalContent.innerHTML = `
-                <h2>${data.name}</h2>
-                <img src="${imageUrl}" alt="${data.name}">
-                <p>Peso: ${data.weight}</p>
-                <p>Altura: ${data.height}</p>
-                <p>Tipo(s): ${data.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
-            `;
+            return fetch(data.species.url)
+                .then(response => response.json())
+                .then(speciesData => getEvolutionChain(speciesData.evolution_chain.url)
+                    .then(evolutionChain => {
+                        const evolutionPromises = evolutionChain.map(evo => fetch(`https://pokeapi.co/api/v2/pokemon/${evo.name}`)
+                            .then(response => response.json())
+                            .then(pokemonData => ({ name: evo.name, image: pokemonData.sprites.front_default }))
+                            .catch(error => {
+                                console.error(`Error al obtener datos de ${evo.name}:`, error);
+                                return { name: evo.name, image: '' };
+                            })
+                        );
 
-            document.getElementById('pokemonModal').style.display = 'flex';
+                        return Promise.all(evolutionPromises)
+                            .then(evolutionDetails => {
+                                const evolutionHTML = evolutionDetails.map(evo => evo.image ? `<img src="${evo.image}" alt="${evo.name}" title="${evo.name}" style="width: 50px; height: 50px;">` : `<span>${evo.name}</span>`).join(' → ');
+                                modalContent.innerHTML = `
+                                    <h2>${data.name}</h2>
+                                    <img src="${imageUrl}" alt="${data.name}">
+                                    <p>Weight: ${data.weight/10} Kg</p>
+                                    <p>Height: ${data.height/10} Mts</p>
+                                    <p>Type: ${data.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
+                                    <p>Skills: ${abilities}</p>
+                                    <p>Evolutions: ${evolutionHTML}</p>
+                                `;
+                                document.getElementById('pokemonModal').style.display = 'flex';
+                                document.body.style.overflow = 'hidden';
+                            });
+                    })
+                );
         })
-        .catch(error => {
-            console.error('Error al obtener detalles del Pokémon:', error);
-        });
+        .catch(error => console.error('Error al obtener detalles del Pokémon:', error));
 }
 
-// Evento para cerrar el modal
 document.getElementById('closeModal').addEventListener('click', () => {
     document.getElementById('pokemonModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
 });
 
-// Función para cargar Pokémon adicionales (después de los primeros 20)
 function loadMorePokemons() {
     fetch(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${offset}`)
         .then(response => response.json())
         .then(data => {
-            data.results.forEach(pokemon => {
-                getPokemonByName(pokemon.name, false); // Mostrar Pokémon sin limpiar en cada llamada
-            });
-            offset += 20; // Incrementar el desplazamiento para la próxima carga
+            data.results.forEach(pokemon => getPokemonByName(pokemon.name, false));
+            offset += 20;
         })
         .catch(error => console.error('Error al cargar más Pokémon:', error));
 }
 
-// Evento en el botón de "Cargar Más"
 document.getElementById('loadMore').addEventListener('click', () => {
-    loadMorePokemons(); // Cargar más Pokémon cuando se haga clic en el botón
+    loadMorePokemons();
 });
 
 document.getElementById('searchByName').addEventListener('click', () => {
@@ -195,4 +210,4 @@ window.onload = () => {
     getPokemonTypes();
 };
 
-let offset = 20; // Desplazamiento inicial después de los primeros 20 Pokémon
+let offset = 20;
