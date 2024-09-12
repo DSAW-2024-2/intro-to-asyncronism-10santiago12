@@ -215,33 +215,48 @@ select
 {
     h1
     {
-        font-size: 40px;
+        font-size: 32px;
     }
 
     .pokemon-card img 
     {
-    max-width: 100px;
-    height: auto;
+        max-width: 80px;
+        height: auto;
     }
 
-    #modalPokemonDetails img {
-    max-width: 50%;
+    #modalPokemonDetails 
+    {
+        width: 50%;
+        align-items: center;
+        max-width: 300px;
+        padding: 10px;
+        font-size: 70%;
     }
 
-    .search-filters {
-    flex-direction: column;
+    #modalPokemonDetails img 
+    {
+        max-width: 50%;
+        height: auto;
     }
 
-    input[type="text"], select {
-    width: 100%;
+    .search-filters 
+    {
+        flex-direction: column;
     }
 
-    .pokemon-container {
-    grid-template-columns: 1fr;
+    input[type="text"], select 
+    {
+        width: 100%;
     }
 
-    .pokemon-card {
-    padding: 5px;
+    .pokemon-container 
+    {
+        grid-template-columns: 1fr;
+    }
+
+    .pokemon-card 
+    {
+        padding: 5px;
     }
 }
 
@@ -254,9 +269,17 @@ select
         height: auto;
     }
 
+    #modalPokemonDetails 
+    {
+        width: 80%;
+        max-width: 400px;
+        padding: 15px;
+    }
+
     #modalPokemonDetails img 
     {
-        max-width: 60%;
+        max-width: 70%;
+        height: auto;
     }
 
     .search-filters 
@@ -279,4 +302,3 @@ select
         padding: 10px;
     }
 }
-
