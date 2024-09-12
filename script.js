@@ -1,3 +1,25 @@
+// Mapa de tipos de Pokémon a colores
+const typeColors = {
+    fire: '#FF9A9A',     
+    water: '#A2C2E2',        
+    electric: '#F6E3B4',     
+    grass: '#B9D6B8',        
+    ice: '#A1E8E4',          
+    fighting: '#E4B7A0',     
+    poison: '#C3A6D1',       
+    ground: '#D1B6A3',       
+    flying: '#B2D9F7',       
+    psychic: '#F4A6B8',      
+    bug: '#B2D8B2',          
+    rock: '#B0B0B0',         
+    ghost: '#C8A0D0',       
+    dragon: '#A0A6D4',       
+    dark: '#6D6D6D',        
+    steel: '#B0B0B0',
+    fairy: '#F4C6D8'         
+};
+
+
 function getRandomPokemon() {
     const randomId = Math.floor(Math.random() * 1025) + 1;
     clearPokemonInfo();
@@ -28,7 +50,7 @@ function displayPokemon(pokemon) {
 
     if (!imageUrl) {
         pokemonInfo.innerHTML += `
-            <div class="pokemon-card" onclick="showPokemonDetails('${pokemon.id}')">
+            <div class="pokemon-card" style="background-color: gray;" onclick="showPokemonDetails('${pokemon.id}')">
                 <h2>${pokemon.name}</h2>
                 <p>No se encontró una imagen disponible para este Pokémon.</p>
             </div>
@@ -37,13 +59,17 @@ function displayPokemon(pokemon) {
     }
 
     const abilities = pokemon.abilities.map(abilityInfo => abilityInfo.ability.name).join(', ');
+    const types = pokemon.types.map(typeInfo => typeInfo.type.name);
+    const primaryType = types[0]; // Usar el primer tipo como referencia para el color
 
+    // Crear la tarjeta de Pokémon con color de fondo según el tipo
     pokemonInfo.innerHTML += `
-        <div class="pokemon-card" onclick="showPokemonDetails('${pokemon.id}')">
+        <div class="pokemon-card" style="background-color: ${typeColors[primaryType] || 'gray'};" onclick="showPokemonDetails('${pokemon.id}')">
             <h2>${pokemon.name}</h2>
-            <p>Weight: ${pokemon.weight/10} Kg</p>
-            <p>Type: ${pokemon.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
+            <p>Weight: ${pokemon.weight / 10} Kg</p>
+            <p>Type: ${types.join(', ')}</p>
             <img src="${imageUrl}" alt="${pokemon.name}">
+            <p>Click to see more details</p>
         </div>
     `;
 }
@@ -164,8 +190,9 @@ function showPokemonDetails(id) {
                                 modalContent.innerHTML = `
                                     <h2>${data.name}</h2>
                                     <img src="${imageUrl}" alt="${data.name}">
-                                    <p>Weight: ${data.weight/10} Kg</p>
-                                    <p>Height: ${data.height/10} Mts</p>
+                                    <p>ID: ${data.id}</p>
+                                    <p>Weight: ${data.weight / 10} Kg</p>
+                                    <p>Height: ${data.height / 10} Mts</p>
                                     <p>Type: ${data.types.map(typeInfo => typeInfo.type.name).join(', ')}</p>
                                     <p>Skills: ${abilities}</p>
                                     <p>Evolutions: ${evolutionHTML}</p>
