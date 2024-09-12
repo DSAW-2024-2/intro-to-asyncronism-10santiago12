@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Protest+Guerrilla&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1 id="title" style="cursor: pointer">Pokédex</h1>
+    </header>
+    
+    <div class="main-container">
+        <div class="search-filters">
+            <label for="pokemonName">Search by name:</label>
+            <input type="text" id="pokemonName" placeholder="Name or ID">
+            <button id="searchByName">Search</button>
+            
+            <label for="pokemonType">Search by type:</label>
+            <select id="pokemonType"></select>
+        </div>
+        
+        <div class="random-button">
+            <button id="randomPokemon"> Pick a random Pokémon</button>
+        </div>
+    </div>
+
+    <div id="pokemonInfo" class="pokemon-container"></div>
+
+    <div id="pokemonModal" class="modal">
+        <div class="modal-content">
+            
+            <div id="modalPokemonDetails"><span id="closeModal">&times;</span></div>
+        </div>
+    </div>
+
+    <footer>
+        <button id="loadMore">Load more</button>
+        <button id="back">Back to top</button>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
